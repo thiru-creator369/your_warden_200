@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Warden — Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    .rotate-90 { transform: rotate(90deg); }
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen">
+
+  <!-- ── Top Navigation ──────────────────────────────────────────────────── -->
+  <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <!-- Left: Logo + Title -->
+        <div class="flex items-center gap-3">
+          <div class="flex items-center justify-center w-9 h-9 bg-slate-900 rounded-xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-base font-bold text-slate-900 leading-tight">Your Warden</h1>
+            <p class="text-xs text-slate-500 leading-tight">AI Application Firewall</p>
+          </div>
+        </div>
+
+        <!-- Right: Status + User + Logout -->
+        <div class="flex items-center gap-4">
+          <!-- Connection Status -->
+          <div class="flex items-center gap-1.5">
+            <div id="status-dot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
+            <span id="status-text" class="text-xs text-slate-500">Connecting…</span>
+          </div>
+
+          <div class="w-px h-6 bg-slate-200"></div>
+
+          <!-- User -->
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+              </svg>
+            </div>
+            <span id="user-email" class="text-xs text-slate-600 hidden sm:inline">—</span>
+          </div>
+
+          <button id="logout-btn" class="text-xs text-slate-500 hover:text-slate-900 font-medium transition-colors flex items-center gap-1">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── Main Content ────────────────────────────────────────────────────── -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- ── Summary Stats ─────────────────────────────────────────────────── -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <!-- Total Scans -->
+      <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-5 hover:shadow-md transition-shadow">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-slate-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">Total Incidents</p>
+            <p id="stat-total" class="text-2xl font-bold text-slate-900">0</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Quarantines -->
+      <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-5 hover:shadow-md transition-shadow">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-amber-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">Active Quarantines</p>
+            <p id="stat-quarantined" class="text-2xl font-bold text-amber-600">0</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resolved -->
+      <div class="bg-white border border-slate-200 shadow-sm rounded-xl p-5 hover:shadow-md transition-shadow">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-xs text-slate-500 font-medium">Resolved</p>
+            <p id="stat-resolved" class="text-2xl font-bold text-emerald-600">0</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Educational Security Banner (For Non-Technical Users) ─────── -->
+    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white rounded-2xl p-6 mb-8 shadow-sm">
+      <div class="flex items-start gap-4">
+        <div class="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center flex-shrink-0 text-amber-400">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <h3 class="text-base font-bold text-white">How Your Warden AI Firewall Protects You</h3>
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 font-semibold px-2 py-0.5 rounded-full border border-emerald-500/30">Dual-Approval Sync Active</span>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed mb-4 max-w-4xl">
+            When you ask Claude or other AI models to read a resume, contract, or PDF, attackers can secretly hide malicious instructions inside that document. Your Warden scans every file before Claude touches it, quarantining dangerous files until you approve them.
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+            <div class="bg-white/10 rounded-xl p-3 border border-white/10">
+              <p class="font-bold text-amber-300 mb-1 flex items-center gap-1.5">
+                <span>🤖</span> What is Prompt Injection?
+              </p>
+              <p class="text-slate-300 leading-normal">
+                Hidden directives (like <em>"Ignore previous instructions"</em>) that deceive the AI into ignoring safety rules and acting on behalf of an attacker instead of you.
+              </p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-3 border border-white/10">
+              <p class="font-bold text-rose-300 mb-1 flex items-center gap-1.5">
+                <span>🕵️</span> What is Data Exfiltration?
+              </p>
+              <p class="text-slate-300 leading-normal">
+                Invisible links or web beacons (like webhook URLs) embedded in documents designed to secretly transmit your private chat context or answers to an external server.
+              </p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-3 border border-white/10">
+              <p class="font-bold text-emerald-300 mb-1 flex items-center gap-1.5">
+                <span>⚡</span> Which Decision Should I Choose?
+              </p>
+              <p class="text-slate-300 leading-normal">
+                Always choose <strong class="text-amber-300">Allow Sanitized</strong>! It removes the dangerous attacker commands while releasing the genuine text to Claude safely.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section Header ────────────────────────────────────────────────── -->
+    <div class="flex items-center justify-between mb-4">
+      <div>
+        <h2 class="text-lg font-semibold text-slate-900">Incident Feed</h2>
+        <p class="text-sm text-slate-500">Live stream of quarantined and resolved incidents</p>
+      </div>
+      <div class="flex items-center gap-1.5 text-xs text-slate-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+        </svg>
+        Real-time updates
+      </div>
+    </div>
+
+    <!-- ── Empty State ───────────────────────────────────────────────────── -->
+    <div id="empty-state" class="bg-white border border-slate-200 shadow-sm rounded-xl p-12 text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-2xl mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <h3 class="text-base font-semibold text-slate-900 mb-1">No incidents yet</h3>
+      <p class="text-sm text-slate-500 max-w-sm mx-auto">
+        When documents are scanned and threats are detected, quarantined incidents will appear here in real time.
+      </p>
+    </div>
+
+    <!-- ── Incidents List ────────────────────────────────────────────────── -->
+    <div id="incidents-list" class="space-y-4"></div>
+
+  </main>
+
+  <!-- ── Footer ──────────────────────────────────────────────────────────── -->
+  <footer class="border-t border-slate-200 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <p class="text-center text-xs text-slate-400">
+        Your Warden — AI Application Firewall · Dashboard v1.0
+      </p>
+    </div>
+  </footer>
+
+  <!-- ── Application Script ──────────────────────────────────────────────── -->
+  <script type="module" src="app.js"></script>
+
+</body>
+</html>
