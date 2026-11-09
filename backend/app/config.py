@@ -44,7 +44,7 @@ class Settings(BaseSettings):
     RISK_MEDIUM_MAX: float = 0.65
 
     # --- Evaluator AI ---
-    EVALUATOR_MODEL: str = "gemini-2.0-flash"
+    EVALUATOR_MODEL: str = "gemini-flash-lite-latest"
     EVALUATOR_TIMEOUT: int = 30
 
     # --- Quarantine ---

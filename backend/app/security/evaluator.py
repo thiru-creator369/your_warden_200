@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import uuid
 from typing import Optional
 
@@ -61,8 +62,17 @@ async def evaluate_text(text: str) -> EvaluatorVerdict:
         f"{wrapped_payload}"
     )
 
+    api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
+    if not api_key:
+        return EvaluatorVerdict(
+            is_injection=False,
+            risk_score=0.0,
+            threat_type=ThreatType.NONE,
+            flagged_excerpts=[],
+        )
+
     try:
-        client = genai.Client()
+        client = genai.Client(api_key=api_key)
         response = await client.aio.models.generate_content(
             model=settings.EVALUATOR_MODEL,
             contents=user_prompt,
